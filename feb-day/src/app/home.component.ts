@@ -9,6 +9,7 @@ import { Router } from '@angular/router';
 })
 export class HomeComponent implements OnInit, OnDestroy {
   @ViewChild('noBtn', { static: true, read: ElementRef }) noBtn!: ElementRef<HTMLButtonElement>;
+  @ViewChild('noWrap', { static: true, read: ElementRef }) noWrap!: ElementRef<HTMLElement>;
   @ViewChild('containerRef', { static: true, read: ElementRef }) containerRef!: ElementRef<HTMLElement>;
   @ViewChild('cardRef', { static: true, read: ElementRef }) cardRef!: ElementRef<HTMLElement>;
   messages = [
@@ -19,75 +20,70 @@ export class HomeComponent implements OnInit, OnDestroy {
     'Please say yes? 😊'
   ];
   msgIndex = 0;
-  msg = this.messages[0];
+  msg = '';
+  showMsg = false;
   private mover: any = null;
-  private cycler: any = null;
 
   constructor(private router: Router) {}
 
   ngOnInit(): void {
-    this.startFloating();
-    this.startCycling();
+    // movement is hover-driven; message appears only on NO click
   }
 
   ngOnDestroy(): void {
     clearInterval(this.mover);
-    clearInterval(this.cycler);
   }
 
   goSurprise() {
-    this.router.navigate(['/surprise']);
+    console.log('goSurprise() invoked - navigating to /surprise');
+    this.router.navigateByUrl('/surprise').catch(err => console.error('Navigation error', err));
   }
 
   onNoClick(event: Event) {
     event.stopPropagation();
-    // show a message and gently move button away
+    // show a message (below NO) and gently move the button
     this.msg = this.messages[this.msgIndex];
     this.msgIndex = (this.msgIndex + 1) % this.messages.length;
+    this.showMsg = true;
     this.bump();
   }
 
-  private startFloating() {
-    this.mover = setInterval(() => this.randomMove(), 1200);
+  // hover-controlled mover start/stop
+  startNoHover() {
+    if (this.mover) return;
+    this.mover = setInterval(() => this.randomMove(), 260);
   }
 
-  private startCycling() {
-    this.cycler = setInterval(() => {
-      this.msgIndex = (this.msgIndex + 1) % this.messages.length;
-      this.msg = this.messages[this.msgIndex];
-    }, 1800);
+  stopNoHover() {
+    if (this.mover) {
+      clearInterval(this.mover);
+      this.mover = null;
+      // reset transform
+      try { this.noWrap.nativeElement.style.transform = 'none'; } catch {}
+    }
   }
+
+
 
   private bump() {
     this.randomMove();
   }
 
   private randomMove() {
-    const btn = this.noBtn?.nativeElement;
-    const card = this.cardRef?.nativeElement;
-    if (!btn || !card) return;
+    const wrap = this.noWrap?.nativeElement;
+    const container = this.containerRef?.nativeElement;
+    if (!wrap || !container) return;
 
-    const btnRect = btn.getBoundingClientRect();
-    const cardRect = card.getBoundingClientRect();
-    const vw = window.innerWidth;
-    const vh = window.innerHeight;
+    const contRect = container.getBoundingClientRect();
 
-    const maxLeft = Math.max(10, vw - btnRect.width - 10);
-    const maxTop = Math.max(10, vh - btnRect.height - 10);
+    // limit movement to a reasonable offset from original position
+    const maxX = Math.min(160, Math.max(80, contRect.width / 5));
+    const maxY = Math.min(120, Math.max(40, contRect.height / 8));
 
-    let left = 10;
-    let top = 10;
-    for (let i = 0; i < 60; i++) {
-      left = Math.floor(Math.random() * maxLeft);
-      top = Math.floor(Math.random() * maxTop);
+    const x = Math.floor((Math.random() - 0.5) * 2 * maxX);
+    const y = Math.floor((Math.random() - 0.5) * 2 * maxY);
 
-      const overlapX = left + btnRect.width > cardRect.left && left < cardRect.right;
-      const overlapY = top + btnRect.height > cardRect.top && top < cardRect.bottom;
-      if (!(overlapX && overlapY)) break;
-    }
-
-    btn.style.position = 'fixed';
-    btn.style.left = left + 'px';
-    btn.style.top = top + 'px';
+    wrap.style.transition = 'transform 180ms ease';
+    wrap.style.transform = `translate(${x}px, ${y}px)`;
   }
 }
