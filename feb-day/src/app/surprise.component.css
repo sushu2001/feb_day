@@ -1,0 +1,6 @@
+.surprise-root{min-height:100vh;display:flex;align-items:center;justify-content:center;background-image:radial-gradient(circle at 20% 20%, rgba(255,240,246,0.6), rgba(255,214,232,0.6)), url('/assets/images/v1.jpeg');background-size:cover;background-position:center;border-radius:0;padding:40px;color:#3b1633}
+.overlay{background:rgba(255,255,255,0.9);padding:32px;border-radius:12px;max-width:900px;text-align:left}
+.overlay h2{margin:0;color:#b50055;font-size:32px}
+.overlay p{color:#6b2f4b;margin-top:12px;font-size:18px}
+.back-wrap{margin-top:18px}
+.back-wrap a{color:#b50055;font-weight:700;text-decoration:none}

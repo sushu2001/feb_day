@@ -1,0 +1,8 @@
+:root{
+	--bg: #ffd6e8;
+	--accent: #ff5c8a;
+}
+html,body,#root{height:100%;}
+body{margin:0;font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; background: radial-gradient(circle at 10% 10%, #fff0f6, var(--bg));}
+.app-shell{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+

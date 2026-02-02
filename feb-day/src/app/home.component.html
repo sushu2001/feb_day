@@ -1,0 +1,15 @@
+<div class="valentine-container" #containerRef>
+  <div class="card" #cardRef>
+    <h1>Will you be my Valentine?</h1>
+    <p class="sub">Please be the love of my life!</p>
+
+    <div class="controls">
+      <button class="yes" (click)="goSurprise()">YES</button>
+    </div>
+  </div>
+
+  <button #noBtn class="no" (click)="onNoClick($event)">NO</button>
+  <div class="no-msg">{{msg}}</div>
+
+  <div class="hint">Tip: Click YES to see a special surprise 💌</div>
+</div>
